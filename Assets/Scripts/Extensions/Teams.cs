@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
+using Photon.Realtime;
 
 
 /// <summary>
@@ -17,7 +19,7 @@ public class Teams : MonoBehaviour
 
     /// <summary>The main list of teams with their player-lists. Automatically kept up to date.</summary>
     /// <remarks>Note that this is static. Can be accessed by PunTeam.PlayersPerTeam. You should not modify this.</remarks>
-    public static Dictionary<Team, List<PhotonPlayer>> PlayersPerTeam;
+    public static Dictionary<Team, List<Player>> PlayersPerTeam;
 
 
 
@@ -26,17 +28,17 @@ public class Teams : MonoBehaviour
     public void Start()
     {
 
-        PlayersPerTeam = new Dictionary<Team, List<PhotonPlayer>>();
+        PlayersPerTeam = new Dictionary<Team, List<Player>>();
         Array enumVals = Enum.GetValues(typeof(Team));
         foreach (var enumVal in enumVals)
         {
-            PlayersPerTeam[(Team)enumVal] = new List<PhotonPlayer>();
+            PlayersPerTeam[(Team)enumVal] = new List<Player>();
         }
     }
 
     public void OnDisable()
     {
-        PlayersPerTeam = new Dictionary<Team, List<PhotonPlayer>>();
+        PlayersPerTeam = new Dictionary<Team, List<Player>>();
     }
 
     /// <summary>Needed to update the team lists when joining a room.</summary>
@@ -59,12 +61,12 @@ public class Teams : MonoBehaviour
         this.UpdateTeams();
     }
 
-    public void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer)
+    public void OnPhotonPlayerDisconnected(Player otherPlayer)
     {
         this.UpdateTeams();
     }
 
-    public void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
+    public void OnPhotonPlayerConnected(Player newPlayer)
     {
         this.UpdateTeams();
     }
@@ -80,9 +82,9 @@ public class Teams : MonoBehaviour
             PlayersPerTeam[(Team)enumVal].Clear();
         }
 
-        for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
-            PhotonPlayer player = PhotonNetwork.playerList[i];
+            Player player = PhotonNetwork.PlayerList[i];
             Team playerTeam = player.GetPlayerTeam();
             PlayersPerTeam[playerTeam].Add(player);
         }

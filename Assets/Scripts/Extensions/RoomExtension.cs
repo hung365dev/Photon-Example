@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Realtime;
+using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class RoomProperties

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
+using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayerProperties
@@ -16,7 +18,7 @@ public static class PlayerExtension
     /// </summary>
     /// <param name="player">Target Photon Player</param>
     /// <param name="score">Score</param>
-    public static void SetScore(this PhotonPlayer player, int score)
+    public static void SetScore(this Player player, int score)
     {
         Hashtable scoreProp = new Hashtable()
         {
@@ -27,7 +29,7 @@ public static class PlayerExtension
     /// <summary>
     /// Add Score to PLayer Properties.
     /// </summary>
-    public static void AddPlayerScore(this PhotonPlayer player, int scoreToAdd)
+    public static void AddPlayerScore(this Player player, int scoreToAdd)
     {
         int current = player.GetCurrentScore();
         current = current + scoreToAdd;
@@ -38,7 +40,7 @@ public static class PlayerExtension
         player.SetCustomProperties(scoreProp);
     }
     /// <summary>Get the current Player Score.</summary>
-    public static int GetCurrentScore(this PhotonPlayer player)
+    public static int GetCurrentScore(this Player player)
     {
         object score;
         if (player.CustomProperties.TryGetValue(PlayerProperties.Score, out score))
@@ -53,7 +55,7 @@ public static class PlayerExtension
 
     #region PlayerReadyState
     /// <summary>Change PhotonPlayer Ready State.</summary>
-    public static void SetReadyState(this PhotonPlayer player, bool value)
+    public static void SetReady(this Player player, bool value)
     {
         Hashtable score = new Hashtable();
         score[PlayerProperties.Ready] = value;
@@ -61,7 +63,7 @@ public static class PlayerExtension
     }
 
     /// <summary>Get PhotonPlayer Ready State, if null its not set.</summary>
-    public static bool GetReadyState(this PhotonPlayer player)
+    public static bool IsReady(this Player player)
     {
         object m_activState;
         if (player.CustomProperties.TryGetValue(PlayerProperties.Ready, out m_activState))
@@ -77,7 +79,7 @@ public static class PlayerExtension
 
     /// <summary>Extension for PhotonPlayer class to wrap up access to the player's custom property.</summary>
     /// <returns>PunTeam.Team.none if no team was found (yet).</returns>
-    public static Teams.Team GetPlayerTeam(this PhotonPlayer player)
+    public static Teams.Team GetPlayerTeam(this Player player)
     {
         object teamId;
         if (player.CustomProperties.TryGetValue(PlayerProperties.Team, out teamId))
@@ -92,11 +94,11 @@ public static class PlayerExtension
     /// <remarks>Internally checks if this player is in that team already or not. Only team switches are actually sent.</remarks>
     /// <param name="player"></param>
     /// <param name="team"></param>
-    public static void SetPlayerTeam(this PhotonPlayer player, Teams.Team team)
+    public static void SetPlayerTeam(this Player player, Teams.Team team)
     {
-        if (!PhotonNetwork.connectedAndReady)
+        if (!PhotonNetwork.IsConnectedAndReady)
         {
-            Debug.LogWarning("JoinTeam was called in state: " + PhotonNetwork.connectionStateDetailed + ". Not connectedAndReady.");
+            Debug.LogWarning("JoinTeam was called in state: " + PhotonNetwork.NetworkClientState + ". Not connectedAndReady.");
             return;
         }
 

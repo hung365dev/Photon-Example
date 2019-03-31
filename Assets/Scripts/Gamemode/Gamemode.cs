@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Photon.Pun;
 using UnityEngine;
+using Photon.Realtime;
 
 //is stored in Room Properties
 public enum Mode { none, TeamDeathMatch, DeatchMatch }
 
-public class Gamemode : Photon.PunBehaviour
+public static class Gamemode
 {
-    public static void AddPlayerToTeam(Mode mod, PhotonPlayer player)
+    public static void AddPlayerToTeam(Mode mod, Player player)
     {
         switch (mod)
         {
@@ -23,7 +25,7 @@ public class Gamemode : Photon.PunBehaviour
     }
 
     ///<summary>Player will be assign to the Team with the lowest count.</summary>
-    private static void AssignToTeam(PhotonPlayer player)
+    private static void AssignToTeam(Player player)
     {
         List<int> m_sizeOfTeams = new List<int>();
 
@@ -47,11 +49,11 @@ public class Gamemode : Photon.PunBehaviour
         AssignPlayerToTeam((Teams.Team)m_smallestTeamIndex, player);
     }
     ///<summary>Player will be assign to the Team Agressiv.</summary>
-    private static void DeatchMatch(PhotonPlayer player)
+    private static void DeatchMatch(Player player)
     {
         AssignPlayerToTeam(Teams.Team.aggressive, player);
     }
-    private static void AssignPlayerToTeam(Teams.Team team, PhotonPlayer player)
+    private static void AssignPlayerToTeam(Teams.Team team, Player player)
     {
         player.SetPlayerTeam(team);
         Teams.PlayersPerTeam[team].Add(player);

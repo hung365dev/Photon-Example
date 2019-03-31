@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Photon.Pun;
 using UnityEngine;
 
 
@@ -66,8 +67,8 @@ public class MovementController : MonoBehaviour
         {
             Mechanics();
         }
-        #region photonView.isMine
-        else if (photonView.isMine && !walkOffline)
+        #region photonView.IsMine
+        else if (photonView.IsMine && !walkOffline)
         {
             Mechanics();
         }

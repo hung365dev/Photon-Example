@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab6a43e293d233744be4eb3245ca8776, type: 3}
+  m_Name: map_LoadingSceen
+  m_EditorClassIdentifier: 
+  sceneObject: {fileID: 102900000, guid: 50d37a806d311464483fac6a130cd0d4, type: 3}
+  mapImage: {fileID: 0}
+  mapName: 
+  mapDescription: 
+  isMenuScene: 1
+  m_sceneIndex: 1
+  allowedGamemode:
+  - name: DeatchMatch
+    allow: 0
+    mode: 2
+  - name: TeamDeathMatch
+    allow: 0
+    mode: 1
