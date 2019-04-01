@@ -13,7 +13,6 @@ public class BouncePad : MonoBehaviour
     {
         if (collider.CompareTag(PlayerTag))
         {
-            Debug.Log("Enters");
             var player = collider.GetComponent<PlayerMovement>();
             player.AddForce(transform.up,BounceForce,BounceDuration);
         }

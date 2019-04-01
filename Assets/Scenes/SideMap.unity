@@ -2647,7 +2647,6 @@ GameObject:
   - component: {fileID: 1612050871}
   - component: {fileID: 1612050870}
   - component: {fileID: 1612050873}
-  - component: {fileID: 1612050868}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -2655,22 +2654,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1612050868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1612050867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6634f5d4d097a6943b11873921e2152b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GroundLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  CharacterController: {fileID: 1612050871}
 --- !u!114 &1612050870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2685,7 +2668,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MovementSpeed: 10
   SlideSpeed: 6
-  SlopeLimit: 50
   Gravity: -9.8
   GravityMultiplier: 2
   GravityBehaviour:
@@ -2694,36 +2676,27 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 3.61102
-      outSlope: 3.61102
+      inSlope: 1
+      outSlope: 1
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.11092372
-      value: 0.4005478
-      inSlope: 2.1426308
-      outSlope: 2.1426308
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   JumpTime: 0.75
   JumpHeight: 4
-  JumpControll: 0.5
+  JumpControl: 1
   Force: 10
   ForceDur: 1
   m_slopeAngle: 0

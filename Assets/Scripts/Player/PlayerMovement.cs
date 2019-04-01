@@ -13,9 +13,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField, BoxGroup("Movement Settings")]
     private float SlideSpeed = 6;
 
-    [SerializeField, BoxGroup("Movement Settings")]
-    private float SlopeLimit = 50;
-
     [SerializeField, BoxGroup("Gravity Settings")]
     private float Gravity = -9.8f;
 
@@ -31,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private float JumpHeight = 1.0f;
 
     [SerializeField, BoxGroup("Jump Settings"), Range(0, 1)]
-    private float JumpControll = 1f;
+    private float JumpControl = 1f;
 
     [SerializeField, BoxGroup("Force Debugging")]
     private float Force = 10;
@@ -46,33 +43,29 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private CharacterController m_characterController;
-    private GroundCheck m_groundCheck;
     private float m_horizontal;
     private bool m_isGrounded = false;
-    private float m_velocity;
     private bool m_isJumping = false;
-    private bool m_canMove = true;
     private Coroutine m_jumpRoutine = null;
 
     [SerializeField, ReadOnly] private float m_slopeAngle = 0f;
-    private float m_maxVelocity = -10.0f;
     private float m_time = 0;
 
     private Vector3 m_normal;
 
     private Vector3 m_moveDir;
-    private CollisionFlags m_collisionFlags;
+    private CollisionFlags m_collisionFlag;
 
-    //force
+    #region Force
     private bool m_activeForce = false;
     private float m_forceTimer = 0.0f;
     private float m_forceDuration = 0.0f;
     private Vector3 m_force = new Vector3();
+    #endregion
 
     private void Awake()
     {
         m_characterController = GetComponent<CharacterController>();
-        m_groundCheck = GetComponent<GroundCheck>();
     }
 
     private void Update()
@@ -90,15 +83,17 @@ public class PlayerMovement : MonoBehaviour
     private void Movement()
     {
         float speed = m_horizontal * MovementSpeed;
-        m_moveDir.x = speed;
-
-        RaycastHit hitInfo;
-        Physics.SphereCast(transform.position, m_characterController.radius, Vector3.down, out hitInfo,
-            m_characterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-        m_moveDir = Vector3.ProjectOnPlane(m_moveDir, hitInfo.normal).normalized;
-        Debug.Log(m_moveDir);
-        m_moveDir.x = speed != 0 ? speed : 0;
-        m_moveDir.z = 0;
+        
+        if (HitSlopeLimit() && !m_isJumping)
+        {
+            m_moveDir = Slide();
+            m_moveDir.z = 0;
+            m_moveDir.x *= SlideSpeed;
+        }
+        else
+        {
+            m_moveDir.x = m_isJumping == true ? speed * JumpControl : speed;
+        }
 
 
 
@@ -111,9 +106,17 @@ public class PlayerMovement : MonoBehaviour
             EvaluateGravity();
         }
 
-        m_collisionFlags =
+        m_collisionFlag =
             m_characterController.Move(transform.TransformDirection(m_moveDir) * Time.fixedDeltaTime);
 
+    }
+
+    private Vector3 Slide()
+    {
+        RaycastHit hitInfo;
+        Physics.SphereCast(transform.position, m_characterController.radius, Vector3.down, out hitInfo,
+                           m_characterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+        return Vector3.ProjectOnPlane(m_moveDir, hitInfo.normal).normalized;
     }
 
     private void EvaluateGravity()
@@ -136,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
     private bool HitSlopeLimit()
     {
         m_slopeAngle = Mathf.Floor(Vector3.Angle(transform.up, m_normal));
-        return m_slopeAngle >= SlopeLimit;
+        return m_slopeAngle >= m_characterController.slopeLimit;
     }
 
     private void PlayerInput()
@@ -151,13 +154,11 @@ public class PlayerMovement : MonoBehaviour
             AddForce(rndDir, Force, ForceDur);
         }
 
-
         //No Jumping while on Slope Limit >> Sliding
-        //if (!HitSlopeLimit())
-
-        Jump();
-
-
+        if (!HitSlopeLimit())
+        {
+            Jump();    
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -183,7 +184,6 @@ public class PlayerMovement : MonoBehaviour
         float timer = 0;
         m_isJumping = true;
         m_moveDir.y = 0;
-        float jumpForce = 0;
 
 
         while (timer < JumpTime)
@@ -192,16 +192,16 @@ public class PlayerMovement : MonoBehaviour
             float jumpVelo = Mathf.Sqrt(JumpHeight * -2 * Gravity);
 
 
-            jumpForce = Mathf.Lerp(jumpVelo, 0, perc);
+            float jumpForce = Mathf.Lerp(jumpVelo, 0, perc);
             timer += Time.deltaTime;
             m_characterController.Move(transform.TransformDirection(new Vector3(0, jumpForce, 0)) * Time.deltaTime);
 
             //Stop Jump if Character Controller Hits a Collider Above
-            if ((m_characterController.collisionFlags & CollisionFlags.Above) != 0)
+            if ((m_collisionFlag & CollisionFlags.Above) != 0)
             {
                 Debug.Log("Headbutted the Wall Above...");
-                jumpForce = 0;
                 m_isJumping = false;
+                
                 yield break;
             }
 
@@ -229,7 +229,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void AddForce(Vector3 direction, float force, float duration)
     {
-        m_velocity = 0;
+        m_moveDir = Vector3.zero;
         m_forceDuration = duration;
         m_forceTimer = 0;
         m_force = direction * force;
@@ -238,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
-        m_velocity = 0;
+        m_moveDir = Vector3.zero;
         m_slopeAngle = 0;
         m_isJumping = false;
     }
